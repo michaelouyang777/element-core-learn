@@ -1,9 +1,17 @@
+/**
+ * 文件说明：
+ * 根据components.json，生成src/index.js文件。
+ */
+
 // 引入组件名单文件（用json文件进行声明）
 var Components = require('../../components.json');
 var fs = require('fs');
+// 【插件】可以让string与变量结合，输出一些内容
 var render = require('json-templater/string');
+// 【插件】转化为驼峰 foo-bar >> FooBar
 var uppercamelcase = require('uppercamelcase');
 var path = require('path');
+// os.EOL属性是一个常量，返回当前操作系统的换行符（Windows系统是\r\n，其他系统是\n）
 var endOfLine = require('os').EOL;
 
 // 输出地址
@@ -102,7 +110,7 @@ var template = render(MAIN_TEMPLATE, {
   list: listTemplate.join(',' + endOfLine)
 });
 
-// 生成入口文
+// 生成src/index.js入口文件
 fs.writeFileSync(OUTPUT_PATH, template);
 console.log('[build entry] DONE:', OUTPUT_PATH);
 
