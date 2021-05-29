@@ -1,3 +1,8 @@
+/**
+ * 文件说明：
+ * 根据package.json中的version,生成examples/versions.json
+ */
+
 var fs = require('fs');
 var path = require('path');
 var version = process.env.VERSION || require('../../package.json').version;
