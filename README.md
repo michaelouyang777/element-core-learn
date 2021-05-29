@@ -25,8 +25,8 @@
 
 
 ------------------------
-* #### 
-> 
+
+
 ### package.json
 通常我们去看一个大型项目都是从package.json文件开始看起的，这里面包含了项目的版本、入口、脚本、依赖等关键信息。
 
@@ -67,6 +67,11 @@
 > "build:file": "node build/bin/iconInit.js & node build/bin/build-entry.js & node build/bin/i18n.js & node build/bin/version.js"
 > ```
 > 该指令主要用来自动化生成一些文件。
+> - build:theme
+> ```
+> "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk"
+> ```
+> 处理样式相关。
 
 * #### repository
 > 项目的仓库地址
