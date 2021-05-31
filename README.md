@@ -3,6 +3,39 @@
 
 
 ### 目录结构解析 
+~~~
+|-- .github                            // 贡献者、issue、PR模版
+|   |-- CONTRIBUTING.en-US.md
+|   |-- CONTRIBUTING.es.md
+|   |-- CONTRIBUTING.fr-FR.md
+|   |-- CONTRIBUTING.zh-CN.md
+|   |-- ISSUE_TEMPLATE.md
+|   |-- PULL_REQUEST_TEMPLATE.md
+|   |-- stale.yml
+|-- build                              // 打包
+|-- examples                           // 示例代码
+|-- packages                           // 组件源码
+|-- src                                // 入口文件以及各种辅助文件
+|-- test                               // 单元测试文件
+|-- types                              // 类型声明
+|-- .babelrc                           // babel相关配置
+|-- .eslintignore
+|-- .eslintrc                          // eslint相关配置
+|-- .gitattributes
+|-- .gitignore
+|-- .travis.yml                        // ci配置
+|-- CHANGELOG.en-US.md
+|-- CHANGELOG.es.md
+|-- CHANGELOG.fr-FR.md
+|-- CHANGELOG.zh-CN.md                 // 版本改动说明
+|-- components.json                    // 组件配置文件
+|-- element_logo.svg
+|-- FAQ.md                             // 常见问题QA
+|-- LICENSE                            // 版权协议相关
+|-- Makefile                           // 脚本集合（工程化编译）
+|-- package.json
+|-- README.md                          // 项目说明文档
+|-- yarn.lock
 
 首先，我们先来看看 ElementUI 的目录结构，总体来说，ElementUI 的目录结构与 vue-cli2 相差不大：
 - github：存放贡献指南以及 issue、PR 模板，这些是一个成熟的开源项目必须具备的。
