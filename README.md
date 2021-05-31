@@ -57,21 +57,36 @@
 
 * #### scripts
 > 开发、测试、生产构建，打包、部署，测试用例等相关脚本。
-> - bootstrap
-> ```
-> "bootstrap": "yarn || npm i"
-> ```
-> 官方推荐使用yarn下载依赖
-> - build:file
-> ```
-> "build:file": "node build/bin/iconInit.js & node build/bin/build-entry.js & node build/bin/i18n.js & node build/bin/version.js"
-> ```
-> 该指令主要用来自动化生成一些文件。
-> - build:theme
-> ```
-> "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk"
-> ```
-> 处理样式相关。
+> - bootstrap <br/>
+>   官方推荐使用yarn下载依赖
+>   ```
+>   "bootstrap": "yarn || npm i"
+>   ```
+> - build:file <br/>
+>   该指令主要用来自动化生成一些文件。
+>   ```
+>   "build:file": "node build/bin/iconInit.js & node build/bin/build-entry.js & node build/bin/i18n.js & node build/bin/version.js"
+>   ```
+>   + node build/bin/iconInit.js <br/>
+>     解析icon.scss，把所有的icon的名字放在icon.json里面 最后挂在Vue原型上的$icon上。
+>   + node build/bin/build-entry.js <br/>
+>     根据components.json文件，生成src/index.js文件。
+>   + node build/bin/i18n.js <br/>
+>     根据 examples/i18n/page.json 和模版，生成不同语言的 demo，也就是官网 demo 展示国际化的处理。
+>   + node build/bin/version.js <br/>
+>     根据package.json中的version,生成examples/versions.json，对应就是完整的版本列表。
+> - build:theme <br/>
+>   处理样式相关。
+>   ```
+>   "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk"
+>   ```
+>   + node build/bin/gen-cssfile <br/>
+>   根据components.json，生成package/theme-chalk/index.scss文件，把所有组件的样式都导入到index.scss。
+>   + gulp build --gulpfile packages/theme-chalk/gulpfile.js <br/>
+>     将packages/theme-chalk下的所有scss文件编译为css。
+>   + cp-cli packages/theme-chalk/lib lib/theme-chalk <br/>
+>     复制文件到lib/theme-chalk下
+>     > cp-cli 是一个跨平台的copy工具，和CopyWebpackPlugin类似
 
 * #### repository
 > 项目的仓库地址
