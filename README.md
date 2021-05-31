@@ -137,6 +137,15 @@
 >     ```
 >     "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk",
 >     ```
+> - pub <br/>
+>   项目发布
+>   ```
+>   "pub": "npm run bootstrap && sh build/git-release.sh && sh build/release.sh && node build/bin/gen-indices.js",
+>   ```
+>   + sh build/git-release.sh <br/>
+>     运行 git-release.sh 进行git冲突的检测。这里主要是检测dev分支是否冲突，因为Element是在dev分支进行开发的。
+>   + build/release.sh <br/>
+>     dev分支代码检测没有冲突，接下来就会执行release.sh脚本，合并dev分支到master、更新版本号、推送代码到远程仓库并发布到npm（npm publish）。
 
 * #### repository
 > 项目的仓库地址
@@ -169,3 +178,22 @@
 
 ### 整个打包流程
 ![打包流程](https://user-gold-cdn.xitu.io/2020/6/23/172df2c6a4ca6dd8?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+
+
+---------------------------------
+
+
+### 发布流程
+Element中发布主要是用shell脚本实现的。
+
+Element发布一共涉及三个部分：
+1. git 发布
+2. npm 发布
+3. 官网发布
+
+发布对应的命令：
+```
+npm run pub
+```
+
