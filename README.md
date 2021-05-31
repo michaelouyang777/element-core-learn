@@ -24,7 +24,8 @@
 - Makefile：在 .github 文件夹下的贡献指南中提到过，组件开发规范中的第一条：通过 make new 创建组件目录结构，包含测试代码、入口文件、文档。其中 make new 就是 make 命令中的一种。make 命令是一个工程化编译工具，而 Makefile 定义了一系列的规则来制定文件变异操作，常常使用 Linux 的同学应该不会对 Makefile 感到陌生。
 
 
-------------------------
+
+---------------------------------
 
 
 ### package.json
@@ -87,6 +88,55 @@
 >   + cp-cli packages/theme-chalk/lib lib/theme-chalk <br/>
 >     复制文件到lib/theme-chalk下
 >     > cp-cli 是一个跨平台的copy工具，和CopyWebpackPlugin类似
+> - dev <br/>
+>   运行项目
+>   ```
+>   "dev": "npm run bootstrap && npm run build:file && cross-env NODE_ENV=development webpack-dev-server --config build/webpack.demo.js & node build/bin/template.js",
+>   ```
+>   + npm run bootstrap <br/>
+>     安装依赖
+>   + npm run build:file <br/>
+>     执行build:file命令。主要用来自动化生成一些文件
+>   + webpack-dev-server --config build/webpack.demo.js <br/>
+>     用于跑Element官网的基础配置
+> - dist <br/>
+>   打包项目
+>   ```
+>   "dist": "npm run clean && npm run build:file && npm run lint && webpack --config build/webpack.conf.js && webpack --config build/webpack.common.js && webpack --config build/webpack.component.js && npm run build:utils && npm run build:umd && npm run build:theme",
+>   ```
+>   + npm run clean <br/>
+>     删除之前打包生成文件
+>     ```
+>     "clean": "rimraf lib && rimraf packages/*/lib && rimraf test/**/coverage",
+>     ```
+>   + npm run build:file <br/>
+>     根据components.json生成入口文件src/index.js，以及i18n相关文件。
+>   + npm run lint <br/>
+>     对项目代码进行es语法检测
+>     ```
+>     "lint": "eslint src/**/* test/**/* packages/**/* build/**/* --quiet",
+>     ```
+>   + webpack --config build/webpack.conf.js <br/>
+>     生成umd格式的js文件（index.js）
+>   + webpack --config build/webpack.common.js <br/>
+>     生成commonjs格式的js文件（element-ui.common.js），require时默认加载的是这个文件。
+>   + webpack --config build/webpack.component.js <br/>
+>     以components.json为入口，将每一个组件打包生成一个文件，用于按需加载。
+>   + npm run build:utils <br/>
+>     把src目录下的除了index.js入口文件外的其他文件通过babel转译，然后移动到lib文件夹下。
+>     ```
+>     "build:utils": "cross-env BABEL_ENV=utils babel src --out-dir lib --ignore src/index.js",
+>     ```
+>   + npm run build:umd <br/>
+>     生成umd模块的语言包。
+>     ```
+>     "build:umd": "node build/bin/build-locale.js",
+>     ```
+>   + npm run build:theme <br/>
+>     根据components.json，生成package/theme-chalk/index.scss。用gulp构建工具，编译scss、压缩、输出css到lib目录。
+>     ```
+>     "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk",
+>     ```
 
 * #### repository
 > 项目的仓库地址
@@ -114,5 +164,8 @@
 
 
 
+---------------------------------
 
 
+### 整个打包流程
+![打包流程](https://user-gold-cdn.xitu.io/2020/6/23/172df2c6a4ca6dd8?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
