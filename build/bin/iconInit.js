@@ -1,4 +1,9 @@
 'use strict';
+/**
+ * 文件说明：
+ * 将./packages/theme-chalk/src/icon.scss'中的满足一定规则的（.el-icon-success:before）选择器的名字（'success'）组成一个数组，
+ * 写入'./examples/icon.json'这个文件中
+ */
 
 var postcss = require('postcss');
 var fs = require('fs');
@@ -19,4 +24,5 @@ nodes.forEach((node) => {
 
 classList.reverse(); // 希望按 css 文件顺序倒序排列
 
+// 将 classList 这个数组转成字符串，然后写入 ./examples/icon.json 这个文件中
 fs.writeFile(path.resolve(__dirname, '../../examples/icon.json'), JSON.stringify(classList), () => {});
