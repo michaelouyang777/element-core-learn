@@ -1,5 +1,8 @@
+// 按钮样式文件
 @charset "UTF-8";
+// 引入公共变量
 @import "common/var";
+// 引入各种mixin
 @import "mixins/button";
 @import "mixins/mixins";
 @import "mixins/utils";
