@@ -1,3 +1,4 @@
+<!-- elementUI 官网Theme - Default theme(主题 - 默认主题)页模板 -->
 <style lang="scss">
 .page-container.page-theme-preview {
   padding-top: 30px;

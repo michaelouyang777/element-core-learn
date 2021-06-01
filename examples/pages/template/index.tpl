@@ -1,3 +1,4 @@
+<!-- elementUI 官网首页模板 -->
 <style scoped>
   .banner {
     text-align: center;

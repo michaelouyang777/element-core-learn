@@ -1,3 +1,4 @@
+<!-- elementUI 官网Resource(资源)页模板 -->
 <style scoped>
   .page-resource {
     padding-top: 55px;

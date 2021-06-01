@@ -36,6 +36,7 @@
 |-- package.json
 |-- README.md                          // 项目说明文档
 |-- yarn.lock
+~~~
 
 首先，我们先来看看 ElementUI 的目录结构，总体来说，ElementUI 的目录结构与 vue-cli2 相差不大：
 - github：存放贡献指南以及 issue、PR 模板，这些是一个成熟的开源项目必须具备的。
@@ -102,7 +103,7 @@
 >   "build:file": "node build/bin/iconInit.js & node build/bin/build-entry.js & node build/bin/i18n.js & node build/bin/version.js"
 >   ```
 >   + node build/bin/iconInit.js <br/>
->     解析icon.scss，把所有的icon的名字放在icon.json里面 最后挂在Vue原型上的$icon上。
+>     解析icon.scss，把所有的icon的名字放在examples/icon.json，最后挂在Vue原型上的$icon上。
 >   + node build/bin/build-entry.js <br/>
 >     根据components.json文件，生成src/index.js文件。
 >   + node build/bin/i18n.js <br/>
@@ -132,6 +133,8 @@
 >     执行build:file命令。主要用来自动化生成一些文件
 >   + webpack-dev-server --config build/webpack.demo.js <br/>
 >     用于跑Element官网的基础配置
+>   + node build/bin/template.js <br/>
+>     根据模板文件（examples/pages）和国际化配置（examples/i18n/page.json）生成国际化文档
 > - dist <br/>
 >   打包项目
 >   ```

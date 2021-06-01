@@ -1,3 +1,4 @@
+<!-- elementUI 官网Component(组件)页模板 -->
 <style>
   .page-component__scroll {
     height: calc(100% - 80px);

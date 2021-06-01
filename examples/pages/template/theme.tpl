@@ -1,3 +1,4 @@
+<!-- elementUI 官网Theme(主题)页模板 -->
 <style lang="scss">
 .page-theme {
   &:last-child {
