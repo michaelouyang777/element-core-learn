@@ -48,7 +48,6 @@
 - types：存放声明文件，方便引入 typescript 写的项目中，需要在 package.json 中指定 - typing 字段的值为 声明的入口文件才能生效。
 
 说完了文件夹目录，抛开那些常见的 .babelrc、.eslintc 等文件，我们来看看根目录下的几个看起来比较奇怪的文件：
-
 - travis.yml：持续集成（CI）的配置文件，它的作用就是在代码提交时，根据该文件执行对应脚本，成熟的开源项目必备之一。
 - CHANGELOG：更新日志，土豪的 ElementUI 准备了 4 个不同语言版本的更新日志。
 - components.json：配置文件，标注了组件的文件路径，方便 webpack 打包时获取组件的文件路径。
@@ -59,20 +58,26 @@
 
 
 
----------------------------------
+
+------------------------------------------------------------
 
 
-### package.json
+
+
+### package.json解析
 通常我们去看一个大型项目都是从package.json文件开始看起的，这里面包含了项目的版本、入口、脚本、依赖等关键信息。
 
 * #### main
 > 项目名
 
+
 * #### version
 > 项目当前的版本
 
+
 * #### description
 > 项目描述
+
 
 * #### main
 > 项目的入口文件
@@ -84,11 +89,14 @@
 > import Element from 'element-ui'
 > ```
 
+
 * #### files
 > 指定npm publish发包时需要包含的文件/目录。
 
+
 * #### typings
 > TypeScript入口文件。
+
 
 * #### scripts
 > 开发、测试、生产构建，打包、部署，测试用例等相关脚本。
@@ -97,6 +105,7 @@
 >   ```
 >   "bootstrap": "yarn || npm i"
 >   ```
+> 
 > - build:file <br/>
 >   该指令主要用来自动化生成一些文件。
 >   ```
@@ -110,6 +119,7 @@
 >     根据 examples/i18n/page.json 和模版，生成不同语言的 demo，也就是官网 demo 展示国际化的处理。
 >   + node build/bin/version.js <br/>
 >     根据package.json中的version,生成examples/versions.json，对应就是完整的版本列表。
+> 
 > - build:theme <br/>
 >   处理样式相关。
 >   ```
@@ -122,6 +132,7 @@
 >   + cp-cli packages/theme-chalk/lib lib/theme-chalk <br/>
 >     复制文件到lib/theme-chalk下
 >     > cp-cli 是一个跨平台的copy工具，和CopyWebpackPlugin类似
+> 
 > - dev <br/>
 >   运行项目
 >   ```
@@ -135,6 +146,16 @@
 >     用于跑Element官网的基础配置
 >   + node build/bin/template.js <br/>
 >     根据模板文件（examples/pages）和国际化配置（examples/i18n/page.json）生成国际化文档
+> 
+> - dev:play <br/>
+>   运行项目 —— 单文件运行（examples/play/index.vue）
+>   ```
+>   "dev:play": "npm run build:file && cross-env NODE_ENV=development PLAY_ENV=true webpack-dev-server --config build/webpack.demo.js",
+>   ```
+>   `dev:play`对比`dev`命令，主要是少了`npm run bootstrap`和`node build/bin/template.js`
+>   > `npm run bootstrap`安装依赖 <br/>
+>   > `node build/bin/template.js`生成在线文档
+>  
 > - dist <br/>
 >   打包项目
 >   ```
@@ -173,6 +194,7 @@
 >     ```
 >     "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk",
 >     ```
+> 
 > - pub <br/>
 >   项目发布
 >   ```
@@ -182,34 +204,51 @@
 >     运行 git-release.sh 进行git冲突的检测。这里主要是检测dev分支是否冲突，因为Element是在dev分支进行开发的。
 >   + build/release.sh <br/>
 >     dev分支代码检测没有冲突，接下来就会执行release.sh脚本，合并dev分支到master、更新版本号、推送代码到远程仓库并发布到npm（npm publish）。
+> 
+> - deploy:build <br/>
+> - deploy:extension <br/>
+> - dev:extension <br/>
+> - test <br/>
+> - test:watch <br/>
+
 
 * #### repository
 > 项目的仓库地址
 
+
 * #### homepage
 > 项目的线上地址
+
 
 * #### keywords
 > 关键字
 
+
 * #### license
 > 项目的开源协议
 
+
 * #### bugs
 > 项目bug反馈的地址
-> 
+
+
 * #### unpkg
 > 当你把一个包发布到npm上时，它同时应该也可以在unpkg上获取到。也就是说，你的代码既可能在NodeJs环境也可能在浏览器环境执行。为此你需要用umd格式打包，lib/index.js是umd规范，由webpack.conf.js生成。
 
+
 * #### style
 > 声明样式入口文件，这里是lib/theme-chalk/index.css。
+
 
 * #### peerDependencies
 > 所依赖的框架版本
 
 
 
----------------------------------
+
+------------------------------------------------------------
+
+
 
 
 ### 整个打包流程
@@ -217,7 +256,10 @@
 
 
 
----------------------------------
+
+------------------------------------------------------------
+
+
 
 
 ### 发布流程
