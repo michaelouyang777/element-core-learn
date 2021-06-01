@@ -122,21 +122,39 @@
 > 
 > - build:theme <br/>
 >   处理样式相关。
+>   根据components.json，生成package/theme-chalk/index.scss。用gulp构建工具，编译scss、压缩、输出css到lib目录。
 >   ```
 >   "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk"
 >   ```
 >   + node build/bin/gen-cssfile <br/>
->   根据components.json，生成package/theme-chalk/index.scss文件，把所有组件的样式都导入到index.scss。
+>     根据components.json，生成package/theme-chalk/index.scss文件，把所有组件的样式都导入到index.scss。
 >   + gulp build --gulpfile packages/theme-chalk/gulpfile.js <br/>
->     将packages/theme-chalk下的所有scss文件编译为css。
+>     使用gulp工具，将packages/theme-chalk下的所有scss文件编译为css。
 >   + cp-cli packages/theme-chalk/lib lib/theme-chalk <br/>
 >     复制文件到lib/theme-chalk下
 >     > cp-cli 是一个跨平台的copy工具，和CopyWebpackPlugin类似
 > 
+> - build:utils <br/>
+>   把src目录下的除了index.js入口文件外的其他文件通过babel转译，然后移动到lib文件夹下。
+>   ```
+>   "build:utils": "cross-env BABEL_ENV=utils babel src --out-dir lib --ignore src/index.js"
+>   ```
+> 
+> - build:umd <br/>
+>   生成umd模块的语言包。
+>   ```
+>   "build:umd": "node build/bin/build-locale.js",
+>   ```
+> - clean <br/>
+>   删除之前打包生成文件
+>   ```
+>   "clean": "rimraf lib && rimraf packages/*/lib && rimraf test/**/coverage",
+>   ```
+> 
 > - dev <br/>
 >   运行项目
 >   ```
->   "dev": "npm run bootstrap && npm run build:file && cross-env NODE_ENV=development webpack-dev-server --config build/webpack.demo.js & node build/bin/template.js",
+>   "dev": "npm run bootstrap && npm run build:file && cross-env NODE_ENV=development webpack-dev-server --config build/webpack.demo.js & node build/bin/template.js"
 >   ```
 >   + npm run bootstrap <br/>
 >     安装依赖
@@ -163,16 +181,10 @@
 >   ```
 >   + npm run clean <br/>
 >     删除之前打包生成文件
->     ```
->     "clean": "rimraf lib && rimraf packages/*/lib && rimraf test/**/coverage",
->     ```
 >   + npm run build:file <br/>
 >     根据components.json生成入口文件src/index.js，以及i18n相关文件。
 >   + npm run lint <br/>
 >     对项目代码进行es语法检测
->     ```
->     "lint": "eslint src/**/* test/**/* packages/**/* build/**/* --quiet",
->     ```
 >   + webpack --config build/webpack.conf.js <br/>
 >     生成umd格式的js文件（index.js）
 >   + webpack --config build/webpack.common.js <br/>
@@ -181,19 +193,16 @@
 >     以components.json为入口，将每一个组件打包生成一个文件，用于按需加载。
 >   + npm run build:utils <br/>
 >     把src目录下的除了index.js入口文件外的其他文件通过babel转译，然后移动到lib文件夹下。
->     ```
->     "build:utils": "cross-env BABEL_ENV=utils babel src --out-dir lib --ignore src/index.js",
->     ```
 >   + npm run build:umd <br/>
 >     生成umd模块的语言包。
->     ```
->     "build:umd": "node build/bin/build-locale.js",
->     ```
 >   + npm run build:theme <br/>
 >     根据components.json，生成package/theme-chalk/index.scss。用gulp构建工具，编译scss、压缩、输出css到lib目录。
->     ```
->     "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk",
->     ```
+>
+> - lint <br/>
+>   对项目代码进行es语法检测
+>   ```
+>   "lint": "eslint src/**/* test/**/* packages/**/* build/**/* --quiet",
+>   ```
 > 
 > - pub <br/>
 >   项目发布
@@ -202,8 +211,9 @@
 >   ```
 >   + sh build/git-release.sh <br/>
 >     运行 git-release.sh 进行git冲突的检测。这里主要是检测dev分支是否冲突，因为Element是在dev分支进行开发的。
->   + build/release.sh <br/>
+>   + sh build/release.sh <br/>
 >     dev分支代码检测没有冲突，接下来就会执行release.sh脚本，合并dev分支到master、更新版本号、推送代码到远程仓库并发布到npm（npm publish）。
+>   + node build/bin/gen-indices.js <br/>
 > 
 > - deploy:build <br/>
 > - deploy:extension <br/>
@@ -275,3 +285,4 @@ Element发布一共涉及三个部分：
 npm run pub
 ```
 
+![发布流程](https://segmentfault.com/img/remote/1460000016419057?w=897&h=1297)
