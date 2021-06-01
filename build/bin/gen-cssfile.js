@@ -1,3 +1,10 @@
+/**
+ * 文件说明：
+ * 将'../../components.json'中所有的组件名称提取出来，
+ * 拼接成一个导入所有这些组件的.scss文件的字符串，
+ * 将这个字符串写入'../../packages/theme-chalk/src/index.scss'文件中。
+ */
+
 var fs = require('fs');
 var path = require('path');
 var Components = require('../../components.json');
