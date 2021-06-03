@@ -92,6 +92,7 @@ ComponentNames.forEach(name => {
     package: name
   }));
 
+  // 这几个特殊组件需要挂载到Vue的原型链上
   if (['Loading', 'MessageBox', 'Notification', 'Message', 'InfiniteScroll'].indexOf(componentName) === -1) {
     installTemplate.push(render(INSTALL_COMPONENT_TEMPLATE, {
       name: componentName,
