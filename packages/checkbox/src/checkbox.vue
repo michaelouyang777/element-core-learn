@@ -21,6 +21,7 @@
       :aria-checked="indeterminate ? 'mixed' : false"
     >
       <span class="el-checkbox__inner"></span>
+      <!-- 如果有 true-value 或者 false-value -->
       <input
         v-if="trueLabel || falseLabel"
         class="el-checkbox__original"
@@ -47,6 +48,7 @@
         @focus="focus = true"
         @blur="focus = false">
     </span>
+    <!-- 文本内容 -->
     <span class="el-checkbox__label" v-if="$slots.default || label">
       <slot></slot>
       <template v-if="!$slots.default">{{label}}</template>
@@ -58,9 +60,9 @@
 
   export default {
     name: 'ElCheckbox',
-
+    // 使用mixin扩展组件
     mixins: [Emitter],
-
+    // 接收父级组件传递下来的数据（elementUI内部使用provide/inject作为父子组件的通讯方式）
     inject: {
       elForm: {
         default: ''
@@ -74,13 +76,17 @@
 
     data() {
       return {
+        // checkbox model
         selfModel: false,
+        // 焦点
         focus: false,
+        // 超过限制？
         isLimitExceeded: false
       };
     },
 
     computed: {
+      // 重新定义 v-model 绑定内容的 get 和 set
       model: {
         get() {
           return this.isGroup
@@ -89,7 +95,9 @@
         },
 
         set(val) {
+          // checkbox group 的set逻辑处理
           if (this.isGroup) {
+            // 处理 isLimitExceeded
             this.isLimitExceeded = false;
             (this._checkboxGroup.min !== undefined &&
               val.length < this._checkboxGroup.min &&
@@ -98,16 +106,18 @@
             (this._checkboxGroup.max !== undefined &&
               val.length > this._checkboxGroup.max &&
               (this.isLimitExceeded = true));
-
+            // 触发 ElCheckboxGroup 的 input 事件
             this.isLimitExceeded === false &&
             this.dispatch('ElCheckboxGroup', 'input', [val]);
           } else {
+            // 触发当前组件 input 事件
             this.$emit('input', val);
+            // 赋值
             this.selfModel = val;
           }
         }
       },
-
+      // 是否选中
       isChecked() {
         if ({}.toString.call(this.model) === '[object Boolean]') {
           return this.model;
@@ -117,7 +127,7 @@
           return this.model === this.trueLabel;
         }
       },
-
+      // 是否为按钮组
       isGroup() {
         let parent = this.$parent;
         while (parent) {
@@ -130,7 +140,7 @@
         }
         return false;
       },
-
+      // 判断 group，checkbox 的 value 获取
       store() {
         return this._checkboxGroup ? this._checkboxGroup.value : this.value;
       },
@@ -142,17 +152,17 @@
           (this.model.length >= max && !this.isChecked) ||
           (this.model.length <= min && this.isChecked);
       },
-
+      // 是否禁用
       isDisabled() {
         return this.isGroup
           ? this._checkboxGroup.disabled || this.disabled || (this.elForm || {}).disabled || this.isLimitDisabled
           : this.disabled || (this.elForm || {}).disabled;
       },
-
+      // elFormItem 的尺寸
       _elFormItemSize() {
         return (this.elFormItem || {}).elFormItemSize;
       },
-
+      // checkbox 尺寸，同样需要有边框才有效
       checkboxSize() {
         const temCheckboxSize = this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
         return this.isGroup
@@ -160,23 +170,34 @@
           : temCheckboxSize;
       }
     },
-
+    // 定义可以传入的属性（elementUI使用props/$emit作为对外组件通讯的方式）
     props: {
+      // value值
       value: {},
+      // 选中状态的值（只有在checkbox-group或者绑定对象类型为array时有效）
       label: {},
+      // 设置 indeterminate 状态，只负责样式控制
       indeterminate: Boolean,
+      // 是否禁用
       disabled: Boolean,
+      // 当前是否勾选
       checked: Boolean,
+      // 原生 name 属性
       name: String,
+      // 选中时的值
       trueLabel: [String, Number],
+      // 没有选中时的值
       falseLabel: [String, Number],
       id: String, /* 当indeterminate为真时，为controls提供相关连的checkbox的id，表明元素间的控制关系*/
       controls: String, /* 当indeterminate为真时，为controls提供相关连的checkbox的id，表明元素间的控制关系*/
+      // 是否显示边框
       border: Boolean,
+      // Checkbox 的尺寸，仅在 border 为真时有效
       size: String
     },
 
     methods: {
+      // 添加数据到model
       addToStore() {
         if (
           Array.isArray(this.model) &&
@@ -187,6 +208,7 @@
           this.model = this.trueLabel || true;
         }
       },
+      // 处理 @change 事件，如果是 group 要处理 group 的 change 事件。
       handleChange(ev) {
         if (this.isLimitExceeded) return;
         let value;
@@ -205,9 +227,11 @@
     },
 
     created() {
+      // 如果 checked 为 true，执行 addToStore 方法
       this.checked && this.addToStore();
     },
-    mounted() { // 为indeterminate元素 添加aria-controls 属性
+    mounted() {
+      // 为indeterminate元素 添加aria-controls 属性
       if (this.indeterminate) {
         this.$el.setAttribute('aria-controls', this.controls);
       }
