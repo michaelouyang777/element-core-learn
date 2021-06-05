@@ -44,8 +44,17 @@
 - examples：存放 ElementUI 组件示例。
 - packages：存放组件源码，也是之后源码分析的主要目标。
 - src：存放入口文件以及各种辅助文件。
+  + directives ：放置自定义指令。
+  + locale：放置语言的配置文件。
+  + mixins：放置组件用的混合文件。
+  + transitions：放置动画配置文件。
+  + utils：放置用到工具函数文件。
+  + index.js：组件注册的入口文件。
 - test：存放单元测试文件，合格的单元测试也是一个成熟的开源项目必备的。
 - types：存放声明文件，方便引入 typescript 写的项目中，需要在 package.json 中指定 - typing 字段的值为 声明的入口文件才能生效。
+> NOTE：
+> * 组件代码放在 packages 目录中，而并不在 src 目录中。
+> * 组件样式、公共样式是放在 packages/theme-chalk/src 目录中。
 
 说完了文件夹目录，抛开那些常见的 .babelrc、.eslintc 等文件，我们来看看根目录下的几个看起来比较奇怪的文件：
 - travis.yml：持续集成（CI）的配置文件，它的作用就是在代码提交时，根据该文件执行对应脚本，成熟的开源项目必备之一。
