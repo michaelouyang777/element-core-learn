@@ -1,9 +1,13 @@
 import Vue from 'vue';
+// 引入app.vue作为全局容器的主组件
 import entry from './app';
 import VueRouter from 'vue-router';
+// 引入element
 import Element from 'main/index.js';
 import hljs from 'highlight.js';
+// 路由配置
 import routes from './route.config';
+// 引入demo项目的一些布局组件
 import demoBlock from './components/demo-block';
 import MainFooter from './components/footer';
 import MainHeader from './components/header';
@@ -11,14 +15,20 @@ import SideNav from './components/side-nav';
 import FooterNav from './components/footer-nav';
 import title from './i18n/title';
 
+// 引入全局样式入口文件
 import 'packages/theme-chalk/src/index.scss';
+// 引入demo样式入口文件
 import './demo-styles/index.scss';
+// 引入公共样式
 import './assets/styles/common.css';
+// 引入字体
 import './assets/styles/fonts/style.css';
 import icon from './icon.json';
 
+// 全局导入element
 Vue.use(Element);
 Vue.use(VueRouter);
+// 全局注册布局组件
 Vue.component('demo-block', demoBlock);
 Vue.component('main-footer', MainFooter);
 Vue.component('main-header', MainHeader);
@@ -40,6 +50,7 @@ Vue.mixin({
 
 Vue.prototype.$icon = icon; // Icon 列表页用
 
+// 路由配置
 const router = new VueRouter({
   mode: 'hash',
   base: __dirname,
