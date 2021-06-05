@@ -15,6 +15,7 @@ const isPlay = !!process.env.PLAY_ENV;
 
 const webpackConfig = {
   mode: process.env.NODE_ENV,
+  // dev命令的入口文件是 examples 目录下的 entry.js
   entry: isProd ? {
     docs: './examples/entry.js'
   } : (isPlay ? './examples/play.js' : './examples/entry.js'),
@@ -72,9 +73,12 @@ const webpackConfig = {
           'sass-loader'
         ]
       },
+      // 检测.md文件，用vue-loader和md-loader解析（先执行md-loader，再执行vue-loader）
+      // 对于 md-loader，输入的是 .md 文档，输出的则是一个 Vue SFC 格式的字符串，这样它的输出就可以作为下一个 vue-loader 的输入做处理了
       {
         test: /\.md$/,
         use: [
+          // vue-loader
           {
             loader: 'vue-loader',
             options: {
@@ -83,6 +87,7 @@ const webpackConfig = {
               }
             }
           },
+          // md-loader
           {
             loader: path.resolve(__dirname, './md-loader/index.js')
           }

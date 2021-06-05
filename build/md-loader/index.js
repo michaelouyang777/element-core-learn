@@ -1,11 +1,22 @@
+/**
+ * md-loader的入口文件
+ * 作用：将.md文件编译成Vue SFC格式的字符串
+ * 描述：首先执行了 md.render(source) 对 md 文档解析，提取文档中 :::demo {content} ::: 内容，
+ *      分别生成一些 Vue 的模板字符串，然后再从这个模板字符串中循环查找 <!--element-demo: 和 :element-demo--> 包裹的内容，
+ *      从中提取模板字符串到 output 中，提取 script 到 componenetsString 中，然后构造 pageScript，最后返回的内容是一个模板字符串
+ */
+
+// 引入工具方法
 const {
   stripScript,
   stripTemplate,
   genInlineComponentText
 } = require('./util');
+// 引入配置文件
 const md = require('./config');
 
 module.exports = function(source) {
+  // 使用md.render(source) 对 md 文档解析
   const content = md.render(source);
 
   const startTag = '<!--element-demo:';
@@ -56,6 +67,7 @@ module.exports = function(source) {
   }
 
   output.push(content.slice(start));
+  // 返回一个模板字符串
   return `
     <template>
       <section class="content element-doc">
