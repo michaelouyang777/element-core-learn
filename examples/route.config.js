@@ -1,6 +1,13 @@
+/**
+ * 路由配置
+ *   对页面路由进行组装，组装成vue-router的route
+ */
+
+// 引入nav导航菜单配置
 import navConfig from './nav.config';
 import langs from './i18n/route';
 
+// 封装对应语言需要加载的组件对象
 const LOAD_MAP = {
   'zh-CN': name => {
     return r => require.ensure([], () =>
@@ -24,10 +31,16 @@ const LOAD_MAP = {
   }
 };
 
+/**
+ * 【工厂函数】获取到对应的路由组件
+ * @param {String} lang 语言
+ * @param {String} path 路径
+ */
 const load = function(lang, path) {
   return LOAD_MAP[lang](path);
 };
 
+// 封装对应语言需要加载的doc
 const LOAD_DOCS_MAP = {
   'zh-CN': path => {
     return r => require.ensure([], () =>
@@ -51,41 +64,65 @@ const LOAD_DOCS_MAP = {
   }
 };
 
+/**
+ * 【工厂函数】获取到对应的doc
+ * @param {String} lang 语言
+ * @param {String} path 路径
+ */
 const loadDocs = function(lang, path) {
   return LOAD_DOCS_MAP[lang](path);
 };
 
+/**
+ * 注册路由
+ * @param {Object} navConfig 导航配置文件
+ */
 const registerRoute = (navConfig) => {
+  // 定义空数组，用作存放组装后的路由对象
   let route = [];
+  // 拿取navConfig的keys作为数组，并遍历。
   Object.keys(navConfig).forEach((lang, index) => {
+    // 拿到对应语言包的配置（数组）
     let navs = navConfig[lang];
+    // 存入对应路由对象（path、redirect、component、children）给route
     route.push({
       path: `/${ lang }/component`,
       redirect: `/${ lang }/component/installation`,
       component: load(lang, 'component'),
       children: []
     });
+    // 遍历已拿到的路由配置（数组）
     navs.forEach(nav => {
+      // 如果有href属性就返回
       if (nav.href) return;
+      // 如果有groups属性（分组属性），则遍历它
       if (nav.groups) {
         nav.groups.forEach(group => {
           group.list.forEach(nav => {
             addRoute(nav, lang, index);
           });
         });
-      } else if (nav.children) {
+      } else if (nav.children) { // 如果有children属性（子路由属性），则遍历它
         nav.children.forEach(nav => {
           addRoute(nav, lang, index);
         });
-      } else {
+      } else { // 都没有则只有一级，直接添加
         addRoute(nav, lang, index);
       }
     });
   });
+  /**
+   * 添加子路由对象到对应的父路由对象中
+   * @param {*} page  nav.config.json中数组的某一item项
+   * @param {*} lang  Object.keys(navConfig)数组的item项——某个语言
+   * @param {*} index Object.keys(navConfig)数组的下标
+   */
   function addRoute(page, lang, index) {
+    // 如果path是changelog则使用load函数，否则使用loadDocs
     const component = page.path === '/changelog'
       ? load(lang, 'changelog')
       : loadDocs(lang, page.path);
+    // 定义子路由对象的路由参数（有path、meta、name、component）
     let child = {
       path: page.path.slice(1),
       meta: {
@@ -96,13 +133,14 @@ const registerRoute = (navConfig) => {
       name: 'component-' + lang + (page.title || page.name),
       component: component.default || component
     };
-
+    // 组装完子路由对象存入对应父路由对象中
     route[index].children.push(child);
   }
 
   return route;
 };
 
+// 根据nav.config.json配置生成route
 let route = registerRoute(navConfig);
 
 const generateMiscRoutes = function(lang) {
