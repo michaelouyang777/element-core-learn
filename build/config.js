@@ -6,6 +6,9 @@ var Components = require('../components.json');
 var utilsList = fs.readdirSync(path.resolve(__dirname, '../src/utils'));
 var mixinsList = fs.readdirSync(path.resolve(__dirname, '../src/mixins'));
 var transitionList = fs.readdirSync(path.resolve(__dirname, '../src/transitions'));
+
+// 存放要排除打包到bundle.js
+// externals 可以防止将这些 import 的包打包到 bundle 中，并在运行时再去从外部获取这些扩展依赖。
 var externals = {};
 
 Object.keys(Components).forEach(function(key) {
