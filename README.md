@@ -75,191 +75,71 @@
 ## package.json解析
 通常我们去看一个大型项目都是从package.json文件开始看起的，这里面包含了项目的版本、入口、脚本、依赖等关键信息。
 
-### name
-> 项目名
+- **name**
+  > 项目名
 
 
-### version
-> 项目当前的版本
+- **version**
+  > 项目当前的版本
 
 
-### description
-> 项目描述
+- **description**
+  > 项目描述
 
 
-### main
-> 项目的入口文件
-> ```
-> "main": "lib/element-ui.common.js",
-> ```
-> 这就是引入该库时所执行的入口文件。
-> ```
-> import Element from 'element-ui'
-> ```
+- **main**
+  > 项目的入口文件
+  > ```js
+  > "main": "lib/element-ui.common.js"
+  > ```
+  > 这就是引入该库时所执行的入口文件。
+  > ```js
+  > import Element from 'element-ui'
+  > ```
 
 
-### files
-> 指定`npm publish`发包时需要包含的文件/目录。
+- **files**
+  > 指定`npm publish`发包时需要包含的文件/目录。
 
 
-### typings
-> TypeScript入口文件。
+- **typings**
+  > TypeScript入口文件。
 
 
-### scripts
-> 开发、测试、生产构建，打包、部署，测试用例等相关脚本。
-> - bootstrap <br/>
->   官方推荐使用yarn下载依赖
->   ```
->   "bootstrap": "yarn || npm i"
->   ```
-> 
-> - build:file <br/>
->   该指令主要用来自动化生成一些文件。
->   ```
->   "build:file": "node build/bin/iconInit.js & node build/bin/build-entry.js & node build/bin/i18n.js & node build/bin/version.js"
->   ```
->   + node build/bin/iconInit.js <br/>
->     解析icon.scss，把所有的icon的名字放在examples/icon.json，最后挂在Vue原型上的$icon上。
->   + node build/bin/build-entry.js <br/>
->     根据components.json文件，生成src/index.js文件。
->   + node build/bin/i18n.js <br/>
->     根据 examples/i18n/page.json 和模版，生成不同语言的 demo，也就是官网 demo 展示国际化的处理。
->   + node build/bin/version.js <br/>
->     根据package.json中的version,生成examples/versions.json，对应就是完整的版本列表。
-> 
-> - build:theme <br/>
->   处理样式相关。
->   根据components.json，生成package/theme-chalk/index.scss。用gulp构建工具，编译scss、压缩、输出css到lib目录。
->   ```
->   "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk"
->   ```
->   + node build/bin/gen-cssfile <br/>
->     根据components.json，生成package/theme-chalk/index.scss文件，把所有组件的样式都导入到index.scss。
->   + gulp build --gulpfile packages/theme-chalk/gulpfile.js <br/>
->     使用gulp工具，将packages/theme-chalk下的所有scss文件编译为css。
->   + cp-cli packages/theme-chalk/lib lib/theme-chalk <br/>
->     复制文件到lib/theme-chalk下
->     > cp-cli 是一个跨平台的copy工具，和CopyWebpackPlugin类似
-> 
-> - build:utils <br/>
->   把src目录下的除了index.js入口文件外的其他文件通过babel转译，然后移动到lib文件夹下。
->   ```
->   "build:utils": "cross-env BABEL_ENV=utils babel src --out-dir lib --ignore src/index.js"
->   ```
-> 
-> - build:umd <br/>
->   生成umd模块的语言包。
->   ```
->   "build:umd": "node build/bin/build-locale.js",
->   ```
-> - clean <br/>
->   删除之前打包生成文件
->   ```
->   "clean": "rimraf lib && rimraf packages/*/lib && rimraf test/**/coverage",
->   ```
-> 
-> - dev <br/>
->   运行项目
->   ```
->   "dev": "npm run bootstrap && npm run build:file && cross-env NODE_ENV=development webpack-dev-server --config build/webpack.demo.js & node build/bin/template.js"
->   ```
->   + npm run bootstrap <br/>
->     安装依赖
->   + npm run build:file <br/>
->     执行build:file命令。主要用来自动化生成一些文件
->   + webpack-dev-server --config build/webpack.demo.js <br/>
->     用于跑Element官网的基础配置
->   + node build/bin/template.js <br/>
->     根据模板文件（examples/pages）和国际化配置（examples/i18n/page.json）生成国际化文档
-> 
-> - dev:play <br/>
->   运行项目 —— 单文件运行（examples/play/index.vue）
->   ```
->   "dev:play": "npm run build:file && cross-env NODE_ENV=development PLAY_ENV=true webpack-dev-server --config build/webpack.demo.js",
->   ```
->   `dev:play`对比`dev`命令，主要是少了`npm run bootstrap`和`node build/bin/template.js`
->   > `npm run bootstrap`安装依赖 <br/>
->   > `node build/bin/template.js`生成在线文档
->  
-> - dist <br/>
->   打包项目
->   ```
->   "dist": "npm run clean && npm run build:file && npm run lint && webpack --config build/webpack.conf.js && webpack --config build/webpack.common.js && webpack --config build/webpack.component.js && npm run build:utils && npm run build:umd && npm run build:theme",
->   ```
->   + npm run clean <br/>
->     删除之前打包生成文件
->   + npm run build:file <br/>
->     根据components.json生成入口文件src/index.js，以及i18n相关文件。
->   + npm run lint <br/>
->     对项目代码进行es语法检测
->   + webpack --config build/webpack.conf.js <br/>
->     生成umd格式的js文件（index.js）
->   + webpack --config build/webpack.common.js <br/>
->     生成commonjs格式的js文件（element-ui.common.js），require时默认加载的是这个文件。
->   + webpack --config build/webpack.component.js <br/>
->     以components.json为入口，将每一个组件打包生成一个文件，用于按需加载。
->   + npm run build:utils <br/>
->     把src目录下的除了index.js入口文件外的其他文件通过babel转译，然后移动到lib文件夹下。
->   + npm run build:umd <br/>
->     生成umd模块的语言包。
->   + npm run build:theme <br/>
->     根据components.json，生成package/theme-chalk/index.scss。用gulp构建工具，编译scss、压缩、输出css到lib目录。
->
-> - lint <br/>
->   对项目代码进行es语法检测
->   ```
->   "lint": "eslint src/**/* test/**/* packages/**/* build/**/* --quiet",
->   ```
-> 
-> - pub <br/>
->   项目发布
->   ```
->   "pub": "npm run bootstrap && sh build/git-release.sh && sh build/release.sh && node build/bin/gen-indices.js",
->   ```
->   + sh build/git-release.sh <br/>
->     运行 git-release.sh 进行git冲突的检测。这里主要是检测dev分支是否冲突，因为Element是在dev分支进行开发的。
->   + sh build/release.sh <br/>
->     dev分支代码检测没有冲突，接下来就会执行release.sh脚本，合并dev分支到master、更新版本号、推送代码到远程仓库并发布到npm（npm publish）。
->   + node build/bin/gen-indices.js <br/>
-> 
-> - deploy:build <br/>
-> - deploy:extension <br/>
-> - dev:extension <br/>
-> - test <br/>
-> - test:watch <br/>
+- **scripts**
+  > 开发、测试、生产构建，打包、部署，测试用例等相关脚本。
 
 
-### repository
-> 项目的仓库地址
+- **repository**
+  > 项目的仓库地址
 
 
-### homepage
-> 项目的线上地址
+- **homepage**
+  > 项目的线上地址
 
 
-### keywords
-> 关键字
+- **keywords**
+  > 关键字
 
 
-### license
-> 项目的开源协议
+- **license**
+  > 项目的开源协议
 
 
-### bugs
-> 项目bug反馈的地址
+- **bugs**
+  > 项目bug反馈的地址
 
 
-### unpkg
-> 当你把一个包发布到npm上时，它同时应该也可以在unpkg上获取到。也就是说，你的代码既可能在NodeJs环境也可能在浏览器环境执行。为此你需要用umd格式打包，lib/index.js是umd规范，由webpack.conf.js生成。
+- **unpkg**
+  > 当你把一个包发布到npm上时，它同时应该也可以在unpkg上获取到。也就是说，你的代码既可能在NodeJs环境也可能在浏览器环境执行。为此你需要用umd格式打包，lib/index.js是umd规范，由webpack.conf.js生成。
 
 
-### style
-> 声明样式入口文件，这里是lib/theme-chalk/index.css。
+- **style**
+  > 声明样式入口文件，这里是lib/theme-chalk/index.css。
 
 
-### peerDependencies
-> 所依赖的框架版本
+- **peerDependencies**
+  > 所依赖的框架版本
 
 
 
@@ -529,6 +409,188 @@ console.log('[build entry] DONE:', OUTPUT_PATH);
 ```
 
 
+
+
+------------------------------------------------------------
+
+
+
+
+## 组件定义
+
+`packages`文件夹中存放的是组件的源码，里面一个文件夹就是一个组件。
+
+> 注意：
+> 除了`packages/theme-chalk`这个文件夹，这是存放所有组件的样式文件夹。
+
+![packages目录](https://github.com/michaelouyang777/element-core-learn/tree/core-learn/doc/packages.png)
+
+
+
+
+
+------------------------------------------------------------
+
+
+
+
+## shell命令详解
+
+element在`package.json`中的scripts字段内有非常多的命令，这里单独一节出来详细解释。
+
+shell命令列表：
+```json
+"scripts": {
+  "bootstrap": "yarn || npm i",
+  "build:file": "node build/bin/iconInit.js & node build/bin/build-entry.js & node build/bin/i18n.js & node build/bin/version.js",
+  "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk",
+  "build:utils": "cross-env BABEL_ENV=utils babel src --out-dir lib --ignore src/index.js",
+  "build:umd": "node build/bin/build-locale.js",
+  "clean": "rimraf lib && rimraf packages/*/lib && rimraf test/**/coverage",
+  "deploy:build": "npm run build:file && cross-env NODE_ENV=production webpack --config build/webpack.demo.js && echo element.eleme.io>>examples/element-ui/CNAME",
+  "deploy:extension": "cross-env NODE_ENV=production webpack --config build/webpack.extension.js",
+  "dev:extension": "rimraf examples/extension/dist && cross-env NODE_ENV=development webpack --watch --config build/webpack.extension.js",
+  "dev": "npm run build:file && cross-env NODE_ENV=development webpack-dev-server --config build/webpack.demo.js & node build/bin/template.js",
+  "dev:play": "npm run build:file && cross-env NODE_ENV=development PLAY_ENV=true webpack-dev-server --config build/webpack.demo.js",
+  "dist": "npm run clean && npm run build:file && npm run lint && webpack --config build/webpack.conf.js && webpack --config build/webpack.common.js && webpack --config build/webpack.component.js && npm run build:utils && npm run build:umd && npm run build:theme",
+  "i18n": "node build/bin/i18n.js",
+  "lint": "eslint src/**/* test/**/* packages/**/* build/**/* --quiet",
+  "pub": "npm run bootstrap && sh build/git-release.sh && sh build/release.sh && node build/bin/gen-indices.js",
+  "test": "npm run lint && npm run build:theme && cross-env CI_ENV=/dev/ BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
+  "test:watch": "npm run build:theme && cross-env BABEL_ENV=test karma start test/unit/karma.conf.js"
+}
+```
+
+### bootstrap
+官方推荐使用yarn下载依赖
+```
+"bootstrap": "yarn || npm i"
+```
+
+### build:file
+该指令主要用来自动化生成一些文件。
+```
+"build:file": "node build/bin/iconInit.js & node build/bin/build-entry.js & node build/bin/i18n.js & node build/bin/version.js"
+```
++ node build/bin/iconInit.js
+  解析icon.scss，把所有的icon的名字放在examples/icon.json，最后挂在Vue原型上的$icon上。
++ node build/bin/build-entry.js
+  根据components.json文件，生成src/index.js文件。
++ node build/bin/i18n.js
+  根据 examples/i18n/page.json 和模版，生成不同语言的 demo，也就是官网 demo 展示国际化的处理。
++ node build/bin/version.js
+  根据package.json中的version,生成examples/versions.json，对应就是完整的版本列表。
+
+### build:theme
+处理样式相关。
+根据components.json，生成package/theme-chalk/index.scss。用gulp构建工具，编译scss、压缩、输出css到lib目录。
+```
+"build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk"
+```
++ node build/bin/gen-cssfile
+  根据components.json，生成package/theme-chalk/index.scss文件，把所有组件的样式都导入到index.scss。
++ gulp build --gulpfile packages/theme-chalk/gulpfile.js
+  使用gulp工具，将packages/theme-chalk下的所有scss文件编译为css。
++ cp-cli packages/theme-chalk/lib lib/theme-chalk
+  复制文件到lib/theme-chalk下
+  > cp-cli 是一个跨平台的copy工具，和CopyWebpackPlugin类似
+
+### build:utils
+把src目录下的除了index.js入口文件外的其他文件通过babel转译，然后移动到lib文件夹下。
+```
+"build:utils": "cross-env BABEL_ENV=utils babel src --out-dir lib --ignore src/index.js"
+```
+
+### build:umd
+生成umd模块的语言包。
+```
+"build:umd": "node build/bin/build-locale.js",
+```
+
+### clean
+删除之前打包生成文件
+```
+"clean": "rimraf lib && rimraf packages/*/lib && rimraf test/**/coverage",
+```
+
+### dev
+运行项目
+```
+"dev": "npm run bootstrap && npm run build:file && cross-env NODE_ENV=development webpack-dev-server --config build/webpack.demo.js & node build/bin/template.js"
+```
++ npm run bootstrap
+  安装依赖
++ npm run build:file
+  执行build:file命令。主要用来自动化生成一些文件
++ webpack-dev-server --config build/webpack.demo.js
+  用于跑Element官网的基础配置
++ node build/bin/template.js
+  根据模板文件（examples/pages）和国际化配置（examples/i18n/page.json）生成国际化文档
+
+### dev:play
+运行项目 —— 单文件运行（examples/play/index.vue）
+```
+"dev:play": "npm run build:file && cross-env NODE_ENV=development PLAY_ENV=true webpack-dev-server --config build/webpack.demo.js",
+```
+`dev:play`对比`dev`命令，主要是少了`npm run bootstrap`和`node build/bin/template.js`
+> `npm run bootstrap`安装依赖 <br/>
+> `node build/bin/template.js`生成在线文档
+
+### dist
+打包项目
+```
+"dist": "npm run clean && npm run build:file && npm run lint && webpack --config build/webpack.conf.js && webpack --config build/webpack.common.js && webpack --config build/webpack.component.js && npm run build:utils && npm run build:umd && npm run build:theme",
+```
++ npm run clean
+  删除之前打包生成文件
++ npm run build:file
+  根据components.json生成入口文件src/index.js，以及i18n相关文件。
++ npm run lint
+  对项目代码进行es语法检测
++ webpack --config build/webpack.conf.js
+  生成umd格式的js文件（index.js）
++ webpack --config build/webpack.common.js
+  生成commonjs格式的js文件（element-ui.common.js），require时默认加载的是这个文件。
++ webpack --config build/webpack.component.js
+  以components.json为入口，将每一个组件打包生成一个文件，用于按需加载。
++ npm run build:utils
+  把src目录下的除了index.js入口文件外的其他文件通过babel转译，然后移动到lib文件夹下。
++ npm run build:umd
+  生成umd模块的语言包。
++ npm run build:theme
+  根据components.json，生成package/theme-chalk/index.scss。用gulp构建工具，编译scss、压缩、输出css到lib目录。
+
+### lint
+对项目代码进行es语法检测
+```
+"lint": "eslint src/**/* test/**/* packages/**/* build/**/* --quiet",
+```
+
+### pub
+项目发布
+```
+"pub": "npm run bootstrap && sh build/git-release.sh && sh build/release.sh && node build/bin/gen-indices.js",
+```
++ sh build/git-release.sh
+  运行 git-release.sh 进行git冲突的检测。这里主要是检测dev分支是否冲突，因为Element是在dev分支进行开发的。
++ sh build/release.sh
+  dev分支代码检测没有冲突，接下来就会执行release.sh脚本，合并dev分支到master、更新版本号、推送代码到远程仓库并发布到npm（npm publish）。
++ node build/bin/gen-indices.js
+
+### deploy:build
+TODO
+
+### deploy:extension
+TODO
+
+### dev:extension
+TODO
+
+### test
+TODO
+
+### test:watch
+TODO
 
 
 
