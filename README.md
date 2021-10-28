@@ -416,15 +416,18 @@ console.log('[build entry] DONE:', OUTPUT_PATH);
 
 
 
-## 组件定义
+## 组件定义说明
 
-`packages`文件夹中存放的是组件的源码，里面一个文件夹就是一个组件。
+**组件源码位置：**
+组件的存放位置全都放在`packages`这个目录内。
+`packages`里面一个子文件夹就是一个组件。
+![packages目录](https://michaelouyang777.github.io/element-core-learn//doc/packages.png)
 
-> 注意：
-> 除了`packages/theme-chalk`这个文件夹，这是存放所有组件的样式文件夹。
-
-![packages目录](https://github.com/michaelouyang777/element-core-learn/tree/core-learn/doc/packages.png)
-
+**组件样式源码位置：**
+而组件的样式文件是单独存放的，统一放到`packages/theme-chalk`文件夹内的。
+![packages/theme-chalk目录](https://michaelouyang777.github.io/element-core-learn//doc/theme-chalk.png)
+index.scss是组件样式的统一入口，用于全局引入时导出所有组件样式
+其它的则是每个组件对应的scss文件，用于按需引入时导出对应的组件样式
 
 
 
@@ -470,7 +473,11 @@ shell命令列表：
 ### build:file
 该指令主要用来自动化生成一些文件。
 ```
-"build:file": "node build/bin/iconInit.js & node build/bin/build-entry.js & node build/bin/i18n.js & node build/bin/version.js"
+"build:file": 
+"node build/bin/iconInit.js &
+ node build/bin/build-entry.js &
+ node build/bin/i18n.js &
+ node build/bin/version.js"
 ```
 + node build/bin/iconInit.js
   解析icon.scss，把所有的icon的名字放在examples/icon.json，最后挂在Vue原型上的$icon上。
@@ -601,7 +608,8 @@ TODO
 
 
 ## 整个打包流程
-![打包流程](https://github.com/michaelouyang777/element-core-learn/tree/core-learn/doc/publish.jpg)
+![打包流程](https://michaelouyang777.github.io/element-core-learn//doc/publish.jpg)
+
 
 
 
