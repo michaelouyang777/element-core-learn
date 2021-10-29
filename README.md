@@ -272,7 +272,7 @@ shell命令列表：
 + `gulp build --gulpfile packages/theme-chalk/gulpfile.js`
   使用gulp工具，将`packages/theme-chalk`下的所有scss文件编译为css。
 + `cp-cli packages/theme-chalk/lib lib/theme-chalk`
-  将`packages/theme-chalk/lib`文件复制到`lib/theme-chalk`下
+  将`packages/theme-chalk/lib`文件夹移动到`lib/theme-chalk`下
   > 注：cp-cli 是一个跨平台的copy工具，和CopyWebpackPlugin类似
 
 
@@ -1047,7 +1047,7 @@ exports.build = series(compile, copyfont);
 
 思考：
 为什么element采用gulp来编译scss？而不用webpack来编译scss？
-
+因为gulp可以单独对scss后缀的文件进行编译操作，而webapck是需要指定工程化的js入口文件，并不能单一对scss文件进行编译工作。所以采用gulp。
 
 
 
