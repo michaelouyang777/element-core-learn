@@ -272,7 +272,7 @@ shell命令列表：
 + `gulp build --gulpfile packages/theme-chalk/gulpfile.js`
   使用gulp工具，将`packages/theme-chalk`下的所有scss文件编译为css。
 + `cp-cli packages/theme-chalk/lib lib/theme-chalk`
-  将`packages/theme-chalk/lib`文件夹移动到`lib/theme-chalk`下
+  将`packages/theme-chalk/lib`文件夹拷贝到`lib/theme-chalk`下
   > 注：cp-cli 是一个跨平台的copy工具，和CopyWebpackPlugin类似
 
 
@@ -961,6 +961,55 @@ langConfig.forEach(lang => {
 
 处理流程也很简单：
 遍历`examples/i18n/page.json`，根据不同的数据结构把tpl文件的标志位，通过正则匹配出来，并替换成自己预先设定好的字段。
+
+
+
+
+#### node build/bin/gen-cssfile
+
+根据`components.json`生成`package/theme-chalk/index.scss`文件，把所有组件的样式都导入到index.scss。通过自动化操作生成样式主入口文件，就无需手动引入每个组件了。
+
+```js
+/**
+ * 文件说明：
+ * 将'../../components.json'中所有的组件名称提取出来，
+ * 拼接成一个导入所有这些组件的.scss文件的字符串，
+ * 将这个字符串写入'../../packages/theme-chalk/src/index.scss'文件中。
+ */
+
+var fs = require('fs');
+var path = require('path');
+var Components = require('../../components.json');
+var themes = [
+  'theme-chalk'
+];
+Components = Object.keys(Components);
+var basepath = path.resolve(__dirname, '../../packages/');
+
+function fileExists(filePath) {
+  try {
+    return fs.statSync(filePath).isFile();
+  } catch (err) {
+    return false;
+  }
+}
+
+themes.forEach((theme) => {
+  var isSCSS = theme !== 'theme-default';
+  var indexContent = isSCSS ? '@import "./base.scss";\n' : '@import "./base.css";\n';
+  Components.forEach(function(key) {
+    if (['icon', 'option', 'option-group'].indexOf(key) > -1) return;
+    var fileName = key + (isSCSS ? '.scss' : '.css');
+    indexContent += '@import "./' + fileName + '";\n';
+    var filePath = path.resolve(basepath, theme, 'src', fileName);
+    if (!fileExists(filePath)) {
+      fs.writeFileSync(filePath, '', 'utf8');
+      console.log(theme, ' 创建遗漏的 ', fileName, ' 文件');
+    }
+  });
+  fs.writeFileSync(path.resolve(basepath, theme, 'src', isSCSS ? 'index.scss' : 'index.css'), indexContent);
+});
+```
 
 
 
