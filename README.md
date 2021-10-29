@@ -965,6 +965,91 @@ langConfig.forEach(lang => {
 
 
 
+#### gulp build --gulpfile packages/theme-chalk/gulpfile.js
+
+使用gulp工具，将`packages/theme-chalk`下的所有scss文件编译为css。
+
+
+首先说说，ElementUI在使用时有两种引入方式：
+
+**一、全局引入：**
+```js
+// main.js
+import Vue from 'vue';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import App from './App.vue';
+
+Vue.use(ElementUI);
+
+new Vue({
+  el: '#app',
+  render: h => h(App)
+});
+```
+
+**二、按需引入：**
+```js
+// component
+import Vue from 'vue';
+import { Pagination, Dropdown } from 'element-ui';
+
+import App from './App.vue';
+
+Vue.use(Pagination)
+Vue.use(Dropdown)
+
+new Vue({
+  el: '#app',
+  render: h => h(App)
+});
+```
+
+对应这两种引入方式，Element在打包时对应的也有两种方案。
+
+方案如下：
+按需引入的解决方案：以单个组件来进行划分样式文件，这样就提供按需引入的方式。
+全局引入的解决方案：通过一个汇总入口index.scss，把所有组件的样式文件统统在这里引入。
+再将`packages/theme-chalk`下的所有scss文件编译为css。
+
+
+那么`packages/theme-chalk`下的所有scss文件是如何编译成css呢？
+element是采用gulp单独对scss进行编译操作的。
+而gulp相关的编译逻辑就在`packages/theme-chalk/gulpfile.js`中，配置如下：
+```js
+'use strict';
+
+const { series, src, dest } = require('gulp');
+const sass = require('gulp-sass');  // 编译gulp工具
+const autoprefixer = require('gulp-autoprefixer');  // 添加厂商前缀
+const cssmin = require('gulp-cssmin');  // 压缩css
+
+function compile() {
+  return src('./src/*.scss')  // src下的所有scss文件
+    .pipe(sass.sync())  // 把scss文件编译成css
+    .pipe(autoprefixer({  // 基于目标浏览器版本，添加厂商前缀
+      browsers: ['ie > 9', 'last 2 versions'],
+      cascade: false
+    }))
+    .pipe(cssmin())  // 压缩css
+    .pipe(dest('./lib')); // 输出到lib下
+}
+
+function copyfont() {
+  return src('./src/fonts/**')  // 读取src/fonts下的所有文件
+    .pipe(cssmin())
+    .pipe(dest('./lib/fonts')); // 输出到lib/fonts下
+}
+
+exports.build = series(compile, copyfont);
+```
+
+
+思考：
+为什么element采用gulp来编译scss？而不用webpack来编译scss？
+
+
+
 
 
 
