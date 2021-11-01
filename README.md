@@ -251,7 +251,7 @@ shell命令列表：
 + `node build/bin/i18n.js`
   根据`examples/i18n/page.json`和模版，生成不同语言的demo，也就是官网 demo 展示国际化的处理。
 + `node build/bin/version.js`
-  根据package.json中的version,生成examples/versions.json，对应就是完整的版本列表。
+  根据package.json中的version，生成`examples/versions.json`，对应就是完整的版本列表。
 
 
 
@@ -456,7 +456,7 @@ TODO
   根据`examples/i18n/page.json`和模版，生成不同语言的demo，也就是官网 demo 展示国际化的处理。
 
 + `node build/bin/version.js`
-  根据package.json中的version,生成examples/versions.json，对应就是完整的版本列表。
+  根据package.json中的version，生成`examples/versions.json`，对应就是完整的版本列表。
 
 + `node build/bin/gen-cssfile`
   根据`components.json`，生成`package/theme-chalk/index.scss`文件，把所有组件的样式都导入到index.scss。通过自动化操作生成样式主入口文件，就无需手动引入每个组件了。
@@ -1010,6 +1010,29 @@ langConfig.forEach(lang => {
 
 处理流程也很简单：
 遍历`examples/i18n/page.json`，根据不同的数据结构把tpl文件的标志位，通过正则匹配出来，并替换成自己预先设定好的字段。
+
+
+
+
+#### node build/bin/version.js
+
+根据package.json中的version，生成`examples/versions.json`，对应就是完整的版本列表。
+
+`build/bin/version.js`源码如下：
+```js
+/**
+ * 文件说明：
+ * 根据package.json中的version,生成examples/versions.json
+ */
+
+var fs = require('fs');
+var path = require('path');
+// 如果process.env中有VERSION则用，没有则读取package.json中的version
+var version = process.env.VERSION || require('../../package.json').version;
+var content = { '1.4.13': '1.4', '2.0.11': '2.0', '2.1.0': '2.1', '2.2.2': '2.2', '2.3.9': '2.3', '2.4.11': '2.4', '2.5.4': '2.5', '2.6.3': '2.6', '2.7.2': '2.7', '2.8.2': '2.8', '2.9.2': '2.9', '2.10.1': '2.10', '2.11.1': '2.11', '2.12.0': '2.12', '2.13.2': '2.13', '2.14.1': '2.14' };
+if (!content[version]) content[version] = '2.15';
+fs.writeFileSync(path.resolve(__dirname, '../../examples/versions.json'), JSON.stringify(content));
+```
 
 
 
