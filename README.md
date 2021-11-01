@@ -516,6 +516,55 @@ TODO
 
 ### shell命令详情
 
+#### node build/bin/iconInit.js
+
+解析`packages/theme-chalk/src/icon.scss`文件，把所有的icon的名字放在`examples/icon.json`。
+
+`build/bin/iconInit.js`代码如下：
+```js
+'use strict';
+/**
+ * 文件说明：
+ * 将./packages/theme-chalk/src/icon.scss'中的满足一定规则的（.el-icon-success:before）选择器的名字（'success'）组成一个数组，
+ * 写入'./examples/icon.json'这个文件中
+ */
+
+var postcss = require('postcss');
+var fs = require('fs');
+var path = require('path');
+// 读取packages/theme-chalk/src/icon.scss文件
+var fontFile = fs.readFileSync(path.resolve(__dirname, '../../packages/theme-chalk/src/icon.scss'), 'utf8');
+// 拿到一个节点数组
+var nodes = postcss.parse(fontFile).nodes;
+var classList = [];
+// 遍历节点数组，通过正则判断是否为el-icon-开头的选择器，验证通过的则放入classList中
+nodes.forEach((node) => {
+  var selector = node.selector || '';
+  var reg = new RegExp(/\.el-icon-([^:]+):before/);
+  var arr = selector.match(reg);
+
+  if (arr && arr[1]) {
+    classList.push(arr[1]);
+  }
+});
+
+classList.reverse(); // 希望按 css 文件顺序倒序排列
+
+// 将 classList 这个数组转成字符串，然后写入 ./examples/icon.json 这个文件中
+fs.writeFile(path.resolve(__dirname, '../../examples/icon.json'), JSON.stringify(classList), () => {});
+```
+
+把所有的icon的名字打包编译成`examples/icon.json`的作用是什么？
+这是用于挂载到Vue原型上。
+打开`examples\entry.js`可以看到以下这2句：
+```js
+import icon from './icon.json';
+Vue.prototype.$icon = icon; // Icon 列表页用
+```
+
+
+
+
 #### node build/bin/build-entry.js
 
 一般情况下，源码都会放在src目录下，src下会存在index.js，这个则是项目的主入口文件。
