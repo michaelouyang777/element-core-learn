@@ -127,16 +127,24 @@
           this.select.hoverIndex = this.select.options.indexOf(this);
         }
       },
-
+      
+      // 【事件】点击option选项
       selectOptionClick() {
+        // option 的单项禁用属性不是true，并且分组禁用属性不是true
         if (this.disabled !== true && this.groupDisabled !== true) {
           this.dispatch('ElSelect', 'handleOptionClick', [this, true]);
         }
       },
 
+      // 启用搜索功能输入框的文字发生改变时执行
       queryChange(query) {
+        // RegExp 的第二个参数为 i 表示区分大小写
+        // test() 函数测试一个字符串是否包含某个模式
+        // escapeRegexpString 转义正则表达式中特殊的字符串
+        // 匹配当前列表项中是否存在输入的字符或者开启了可创建列表项功能
         this.visible = new RegExp(escapeRegexpString(query), 'i').test(this.currentLabel) || this.created;
         if (!this.visible) {
+          // 如果当前这一个列表项不显示，就将 筛选出来的列表项 -1
           this.select.filteredOptionsCount--;
         }
       }
